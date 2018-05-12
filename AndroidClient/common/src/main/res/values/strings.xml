@@ -33,6 +33,9 @@
     <!-- сообщения, связынные с файлами -->
     <string name="choose_file">Выберите файл для загрузки</string>
     <string name="not_filechooser">Установите файловый менеджер!</string>
+    <string name="file_not_found">Файл не найден</string>
+    <string name="copy_file_error">При копировании файла произошла ошибка</string>
+    <string name="copy_file_success">Успешно скопирован файл</string>
 
     <!-- заголовки активити -->
     <string name="storage_activity_title">Файлы</string>

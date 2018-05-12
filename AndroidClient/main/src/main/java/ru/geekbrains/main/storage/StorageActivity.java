@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -285,5 +286,23 @@ public class StorageActivity extends AppCompatActivity {
                 }
             }
         };
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle(R.string.exit_app);
+
+        adb.setPositiveButton(R.string.yes, (dialog, which) -> {
+            if (boundServer) unbindService(serverServiceConnection);
+            if (boundFiles) unbindService(filesServiceConnection);
+            Intent intent = new Intent(this, AuthenticationActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("finish", true);
+            startActivity(intent);
+        });
+        adb.setNegativeButton(R.string.no, (dialog, which) -> {
+        });
+        adb.show();
     }
 }
