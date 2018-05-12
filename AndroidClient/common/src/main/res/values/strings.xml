@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Хранилище данных</string>
+
+    <!-- наименования полей в пользовательском интерфейсе -->
+    <string name="registration">Регистрация</string>
+    <string name="authorization">Авторизация</string>
+    <string name="login">Логин</string>
+    <string name="nickname">Имя пользователя</string>
+    <string name="password">Пароль</string>
+    <string name="send">Отправить</string>
 </resources>
