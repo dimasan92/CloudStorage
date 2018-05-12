@@ -9,6 +9,16 @@
     <string name="password">Пароль</string>
     <string name="send">Отправить</string>
 
+    <!-- сообщения: -->
+    <!-- аунтификация -->
+    <string name="reg_success">Успешная регистрация!</string>
+    <string name="reg_nick_already_exist">Пользователь уже зарегестрирован!</string>
+    <string name="reg_failure">Возникла неизвестная ошибка при регистрации</string>
+    <string name="auth_success">Успешная авторизация!</string>
+    <string name="auth_nick_not_exist">Пользователь не существует! Проверьте правильность вводимых данных или зарегистрируйтесь</string>
+    <string name="auth_nick_is_busy">Пользователь уже присоединен!</string>
+    <string name="auth_failure">Возникла неизвестная ошибка при авторизации</string>
+
     <!-- ошибки соединения/сети -->
     <string name="not_net">Отсутствует подключение к сети</string>
     <string name="server_attempt_fail">Не удалось подключиться к серверу</string>

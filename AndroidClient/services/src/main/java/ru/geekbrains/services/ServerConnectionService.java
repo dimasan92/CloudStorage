@@ -10,6 +10,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -81,22 +82,22 @@ public class ServerConnectionService extends Service {
     }
 
         private void listeningToServer() {
-//        try {
-//            // регистрация/авторизация
-//            socket.setSoTimeout(30000);
+        try {
+            // регистрация/авторизация
+            socket.setSoTimeout(30000);
 //            label:
-//            while (!socket.isClosed()) {
-//                String msg = inData.readUTF();
-//                switch (msg) {
-//                    case Constants.REG_SUCCESS:
-//                        handler.sendEmptyMessage(R.string.reg_success);
-//                        break;
-//                    case Constants.REG_NICK_ALREADY_EXIST:
-//                        handler.sendEmptyMessage(R.string.reg_nick_already_exist);
-//                        break;
-//                    case Constants.REG_FAILURE:
-//                        handler.sendEmptyMessage(R.string.reg_failure);
-//                        break;
+            while (!socket.isClosed()) {
+                String msg = inData.readUTF();
+                switch (msg) {
+                    case Constants.REG_SUCCESS:
+                        handler.sendEmptyMessage(R.string.reg_success);
+                        break;
+                    case Constants.REG_NICK_ALREADY_EXIST:
+                        handler.sendEmptyMessage(R.string.reg_nick_already_exist);
+                        break;
+                    case Constants.REG_FAILURE:
+                        handler.sendEmptyMessage(R.string.reg_failure);
+                        break;
 //                    case Constants.AUTH_SUCCESS:
 //                        handler.sendEmptyMessage(R.string.auth_success);
 //                        nickname = inData.readUTF();
@@ -110,8 +111,8 @@ public class ServerConnectionService extends Service {
 //                    case Constants.AUTH_FAILURE:
 //                        handler.sendEmptyMessage(R.string.auth_failure);
 //                        break;
-//                }
-//            }
+                }
+            }
 //            // общение с сервером
 //            socket.setSoTimeout(0);
 //            while (!socket.isClosed()) {
@@ -137,12 +138,23 @@ public class ServerConnectionService extends Service {
 //                    }
 //                }
 //            }
-//        } catch (SocketException e) {
-//        } catch (IOException e) {
-//            handler.sendEmptyMessage(R.string.server_lost);
-//        } finally {
-//            disconnect();
-//        }
+        } catch (SocketException e) {
+        } catch (IOException e) {
+            handler.sendEmptyMessage(R.string.server_lost);
+        } finally {
+            disconnect();
+        }
+    }
+
+    public void disconnect() {
+        connected = false;
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     // возвращает Binder в методе onServiceConnected()

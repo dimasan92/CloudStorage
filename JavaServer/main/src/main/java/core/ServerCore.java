@@ -1,6 +1,8 @@
 package core;
 
 import common.Constants;
+import registration.RegService;
+import registration.SimpleRegService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,13 +23,19 @@ public class ServerCore {
     private List<UserHandler> connectedUsers;       // список подключенных на текущий момент клиентов
     private ExecutorService usersExecutorService;   // управление нитями для пользователей
 
+    private RegService regService;                  // сервис регистрации пользователей
+
+    RegService getRegService() {
+        return regService;
+    }
+
     public ServerCore() {
         connectedUsers = Collections.synchronizedList(new ArrayList<>());
 //        Database dataBase = new CloudStorageDatabase();
 //        dataBase.connect();
 //        storageService = new SimpleFileStorage(dataBase);
+        regService = new SimpleRegService(dataBase, storageService);
 //        authService = new SimpleAuthService(dataBase);
-//        regService = new SimpleRegService(dataBase, storageService);
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
             new Thread(startServer()).start();
             startInputTerminal(br);
@@ -82,7 +90,7 @@ public class ServerCore {
             connectedUsers.clear();
             usersExecutorService = Executors.newCachedThreadPool();
             try {
-            serverSocket = new ServerSocket(Constants.SERVER_PORT);
+                serverSocket = new ServerSocket(Constants.SERVER_PORT);
                 System.out.println("Сервер(порт " + Constants.SERVER_PORT + ") запущен...Ожидание подключения клиентов...");
                 usersProcessing();
             } catch (SocketException e) {
@@ -95,7 +103,7 @@ public class ServerCore {
     }
 
     // работа с клиентами
-    private void usersProcessing() throws IOException{
+    private void usersProcessing() throws IOException {
         // получение данных от подключившихся пользователей и создание для них отдельных нитей в пуле
         while (!serverSocket.isClosed()) {
             Socket socket = serverSocket.accept();
