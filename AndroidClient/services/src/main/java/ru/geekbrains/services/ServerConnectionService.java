@@ -3,6 +3,7 @@ package ru.geekbrains.services;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 
 import java.util.concurrent.ExecutorService;
@@ -10,10 +11,16 @@ import java.util.concurrent.Executors;
 
 public class ServerConnectionService extends Service {
 
-    private ExecutorService executor;    // управляет потоками отправки и получения сообщений
+    private Handler handler;            // сообщения от сервера в активити
+    private ExecutorService executor;   // управляет потоками отправки и получения сообщений
 
     private ConnectBinder binder; // экземпляр для работы с сервисом из Activity
     private boolean connected;    // показывет, плдключен ли клиент к серверу
+
+
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
 
     //вызывается при запуске сервиса
     @Override

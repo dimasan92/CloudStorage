@@ -1,11 +1,13 @@
 package ru.geekbrains.main.authentication;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -182,6 +184,63 @@ public class AuthenticationActivity extends AppCompatActivity {
             public void onServiceDisconnected(ComponentName name) {
                 bound = false;
             }
+        };
+    }
+
+    @SuppressLint("HandlerLeak")
+    private Handler authHandler() {
+        return new Handler() {
+//            @Override
+//            public void handleMessage(Message msg) {
+//                switch (msg.what) {
+//                    case R.string.reg_success:
+//                        Toast.makeText(AuthenticationActivity.this, R.string.reg_success,
+//                                Toast.LENGTH_SHORT).show();
+//                        break;
+//                    case R.string.reg_nick_already_exist:
+//                        Toast.makeText(AuthenticationActivity.this, R.string.reg_nick_already_exist,
+//                                Toast.LENGTH_LONG).show();
+//                        connectionViewEnabled(true);
+//                        break;
+//                    case R.string.reg_failure:
+//                        Toast.makeText(AuthenticationActivity.this, R.string.reg_failure,
+//                                Toast.LENGTH_LONG).show();
+//                        connectionViewEnabled(true);
+//                        break;
+//                    case R.string.auth_success:
+//                        Toast.makeText(AuthenticationActivity.this, R.string.auth_success,
+//                                Toast.LENGTH_LONG).show();
+//                        if (bound) unbindService(serviceConnection);
+//                        bound = false;
+//                        startActivity(new Intent(AuthenticationActivity.this, StorageActivity.class));
+//                        break;
+//                    case R.string.auth_nick_is_busy:
+//                        Toast.makeText(AuthenticationActivity.this, R.string.auth_nick_is_busy,
+//                                Toast.LENGTH_LONG).show();
+//                        connectionViewEnabled(true);
+//                        break;
+//                    case R.string.auth_nick_not_exist:
+//                        Toast.makeText(AuthenticationActivity.this, R.string.auth_nick_not_exist,
+//                                Toast.LENGTH_LONG).show();
+//                        connectionViewEnabled(true);
+//                        break;
+//                    case R.string.auth_failure:
+//                        Toast.makeText(AuthenticationActivity.this, R.string.auth_failure,
+//                                Toast.LENGTH_LONG).show();
+//                        connectionViewEnabled(true);
+//                        break;
+//                    case R.string.server_lost:
+//                        Toast.makeText(AuthenticationActivity.this, R.string.server_lost,
+//                                Toast.LENGTH_LONG).show();
+//                        connectionViewEnabled(true);
+//                        break;
+//                    case R.string.server_attempt_fail:
+//                        Toast.makeText(AuthenticationActivity.this, R.string.server_attempt_fail,
+//                                Toast.LENGTH_LONG).show();
+//                        connectionViewEnabled(true);
+//                        break;
+//                }
+//            }
         };
     }
 }
