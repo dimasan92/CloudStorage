@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import common.Constants;
 import ru.geekbrains.main.R;
+import ru.geekbrains.main.storage.StorageActivity;
 import ru.geekbrains.services.ServerConnectionService;
 
 public class AuthenticationActivity extends AppCompatActivity {
