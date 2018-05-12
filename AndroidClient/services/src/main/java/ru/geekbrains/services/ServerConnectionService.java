@@ -160,6 +160,13 @@ public class ServerConnectionService extends Service {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disconnect();
+        executor.shutdown();
+    }
+
     // возвращает Binder в методе onServiceConnected()
     @Override
     public IBinder onBind(Intent intent) {

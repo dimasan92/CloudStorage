@@ -6,6 +6,10 @@
         <service
             android:name=".ServerConnectionService"
             android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".FileStorageService"
+            android:enabled="true"
             android:exported="true"></service>
     </application>
 

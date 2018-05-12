@@ -1,5 +1,12 @@
 package ru.geekbrains.main.storage;
 
+import android.annotation.SuppressLint;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
@@ -10,9 +17,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ru.geekbrains.main.R;
+import ru.geekbrains.services.FileStorageService;
+import ru.geekbrains.services.ServerConnectionService;
 
 public class StorageActivity extends AppCompatActivity {
-
+    // сервисы
+    private boolean boundFiles;
+    private boolean boundServer;
+        private ServerConnectionService serverConnectionService;
+        private FileStorageService fileStorageService;
+    private ServiceConnection serverServiceConnection;
+    private ServiceConnection filesServiceConnection;
     // список
     private ArrayList<Map<String, Object>> data;
     private SimpleAdapter simpleAdapter;
@@ -25,13 +40,13 @@ public class StorageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_storage);
         makeList();
 
-//        // привязываемся к сервисам
-//        boundServer = false;
-//        boundFiles = false;
-//        serverServiceConnection = serverServiceConnection();
-//        filesServiceConnection = storageServiceConnection();
-//        bindService(new Intent(this, ServerConnectionService.class), serverServiceConnection, 0);
-//        bindSer
+        // привязываемся к сервисам
+        boundServer = false;
+        boundFiles = false;
+        serverServiceConnection = serverServiceConnection();
+        filesServiceConnection = storageServiceConnection();
+        bindService(new Intent(this, ServerConnectionService.class), serverServiceConnection, 0);
+        bindService(new Intent(this, FileStorageService.class), filesServiceConnection, 0);
     }
 
     // создание списка из storage_fileslist_item.xml элементов
@@ -78,5 +93,108 @@ public class StorageActivity extends AppCompatActivity {
             default:
                 return R.drawable.default128;
         }
+    }
+
+    // экземпляр для подключения к сервису соединения с сервером
+    private ServiceConnection serverServiceConnection() {
+        return new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                serverConnectionService =
+                        ((ServerConnectionService.ConnectBinder) service).getService();
+                serverConnectionService.setHandler(storageHandler());
+                boundServer = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                boundServer = false;
+            }
+        };
+    }
+
+    // экземпляр для подключения к сервису работы с файлами
+    private ServiceConnection storageServiceConnection() {
+        return new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                fileStorageService =
+                        ((FileStorageService.FileBinder) service).getService();
+                fileStorageService.setHandler(storageHandler());
+                boundFiles = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                boundFiles = false;
+            }
+        };
+    }
+
+        @SuppressLint("HandlerLeak")
+    private Handler storageHandler() {
+        return new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+//                    case R.string.copy_file_success:
+//                        Toast.makeText(StorageActivity.this, R.string.copy_file_success,
+//                                Toast.LENGTH_SHORT).show();
+//                        String filename = (String) msg.obj;
+//                        addFileToList(filename);
+//                        serverConnectionService.sendMsg(Constants.ADD_FILE + " " + filename);
+//                        break;
+//                    case R.string.file_not_found:
+//                        Toast.makeText(StorageActivity.this, R.string.file_not_found,
+//                                Toast.LENGTH_LONG).show();
+//                        break;
+//                    case R.string.copy_file_error:
+//                        Toast.makeText(StorageActivity.this, R.string.copy_file_error,
+//                                Toast.LENGTH_LONG).show();
+//                        break;
+//                    case R.string.add_file_processing:
+//                        Toast.makeText(StorageActivity.this, R.string.add_file_processing,
+//                                Toast.LENGTH_SHORT).show();
+//                        fileStorageService.sendFileToServer(serverConnectionService.getExecutor(),
+//                                serverConnectionService.getOutData(), StorageActivity.this,
+//                                (String) msg.obj);
+//                        break;
+//                    case R.string.add_file_already:
+//                        Toast.makeText(StorageActivity.this, R.string.add_file_already,
+//                                Toast.LENGTH_LONG).show();
+//                        break;
+//                    case R.string.add_file_success:
+//                        Toast.makeText(StorageActivity.this, R.string.add_file_success,
+//                                Toast.LENGTH_SHORT).show();
+//                        break;
+//                    case R.string.add_file_fail:
+//                        Toast.makeText(StorageActivity.this, R.string.add_file_fail,
+//                                Toast.LENGTH_LONG).show();
+//                        break;
+//                    case R.string.delete_file_from_device_success:
+//                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_device_success,
+//                                Toast.LENGTH_SHORT).show();
+//                        serverConnectionService.sendMsg(Constants.DELETE_FILE + " " + msg.obj);
+//                        break;
+//                    case R.string.delete_file_from_device_fail:
+//                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_device_fail,
+//                                Toast.LENGTH_LONG).show();
+//                        addFileToList((String) msg.obj);
+//                        break;
+//                    case R.string.delete_file_from_server_success:
+//                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_server_success,
+//                                Toast.LENGTH_SHORT).show();
+//                        break;
+//                    case R.string.delete_file_from_server_not_exist:
+//                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_server_not_exist,
+//                                Toast.LENGTH_LONG).show();
+//                        break;
+//                    case R.string.delete_file_from_server_fail:
+//                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_server_fail,
+//                                Toast.LENGTH_LONG).show();
+//                        break;
+                }
+            }
+        };
     }
 }

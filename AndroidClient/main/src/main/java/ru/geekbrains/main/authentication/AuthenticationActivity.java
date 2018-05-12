@@ -27,6 +27,7 @@ import android.widget.Toast;
 import common.Constants;
 import ru.geekbrains.main.R;
 import ru.geekbrains.main.storage.StorageActivity;
+import ru.geekbrains.services.FileStorageService;
 import ru.geekbrains.services.ServerConnectionService;
 
 public class AuthenticationActivity extends AppCompatActivity {
@@ -78,9 +79,9 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         // запускаем сервисы
         intentConnection = new Intent(this, ServerConnectionService.class);
-                intentFiles = new Intent(this, FileStorageService.class);
+        intentFiles = new Intent(this, FileStorageService.class);
         startService(intentConnection);
-                startService(intentFiles);
+        startService(intentFiles);
 
         // привязываемся к сервису, управляющему соединением с сервером
         bound = false;
