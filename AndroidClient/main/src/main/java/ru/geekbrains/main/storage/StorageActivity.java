@@ -1,6 +1,7 @@
 package ru.geekbrains.main.storage;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -9,14 +10,21 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import ru.geekbrains.main.R;
+import ru.geekbrains.main.authentication.AuthenticationActivity;
 import ru.geekbrains.services.FileStorageService;
 import ru.geekbrains.services.ServerConnectionService;
 
@@ -24,8 +32,8 @@ public class StorageActivity extends AppCompatActivity {
     // сервисы
     private boolean boundFiles;
     private boolean boundServer;
-        private ServerConnectionService serverConnectionService;
-        private FileStorageService fileStorageService;
+    private ServerConnectionService serverConnectionService;
+    private FileStorageService fileStorageService;
     private ServiceConnection serverServiceConnection;
     private ServiceConnection filesServiceConnection;
     // список
@@ -33,6 +41,13 @@ public class StorageActivity extends AppCompatActivity {
     private SimpleAdapter simpleAdapter;
     private static final String LIST_ATTRIBUTE_TEXT = "text";
     private static final String LIST_ATTRIBUTE_IMAGE = "image";
+
+    // id для меню
+    private static final int MENU_DELETE = 0;
+    private static final int MENU_ADD = 1;
+
+    // код возвращаемых сообщений
+    private static final int FILE_SELECT_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,8 +110,74 @@ public class StorageActivity extends AppCompatActivity {
         }
     }
 
-    // экземпляр для подключения к сервису соединения с сервером
-    private ServiceConnection serverServiceConnection() {
+    // удаляет строку из списка
+    private void deleteFileFromList(int position) {
+        data.remove(position);
+        simpleAdapter.notifyDataSetChanged();
+    }
+
+    // работа с главным и контекстным меню
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, MENU_ADD, 0, R.string.add_file);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == MENU_ADD) {
+            showFileChooser();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, view, menuInfo);
+        menu.add(0, MENU_DELETE, 0, R.string.delete_file);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (item.getItemId() == MENU_DELETE) {
+            AdapterContextMenuInfo adapter = (AdapterContextMenuInfo) item.getMenuInfo();
+            String filename = (String) data.get(adapter.position).get(LIST_ATTRIBUTE_TEXT);
+            fileStorageService.deleteFileFromDevice(filename, this);
+            deleteFileFromList(adapter.position);
+            return true;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    // открыть менеджер файлов
+    private void showFileChooser() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        try {
+            startActivityForResult(
+                    Intent.createChooser(intent, getResources().getString(R.string.choose_file)), FILE_SELECT_CODE);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, R.string.not_filechooser, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            // получение результата после вызова менеджера фалов
+            case FILE_SELECT_CODE:
+                if (resultCode == RESULT_OK) {
+                    fileStorageService.addNewFile(this, data.getData());
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+                                    // экземпляр для подключения к сервису соединения с сервером
+                                    private ServiceConnection serverServiceConnection() {
         return new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -131,7 +212,7 @@ public class StorageActivity extends AppCompatActivity {
         };
     }
 
-        @SuppressLint("HandlerLeak")
+    @SuppressLint("HandlerLeak")
     private Handler storageHandler() {
         return new Handler() {
             @Override
@@ -193,6 +274,14 @@ public class StorageActivity extends AppCompatActivity {
 //                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_server_fail,
 //                                Toast.LENGTH_LONG).show();
 //                        break;
+                    case R.string.server_lost:
+                        Toast.makeText(StorageActivity.this, R.string.server_lost,
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case R.string.server_attempt_fail:
+                        Toast.makeText(StorageActivity.this, R.string.server_attempt_fail,
+                                Toast.LENGTH_LONG).show();
+                        break;
                 }
             }
         };

@@ -30,9 +30,17 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
 
+    <!-- сообщения, связынные с файлами -->
+    <string name="choose_file">Выберите файл для загрузки</string>
+    <string name="not_filechooser">Установите файловый менеджер!</string>
+
     <!-- заголовки активити -->
     <string name="storage_activity_title">Файлы</string>
 
     <!-- описания картинок -->
     <string name="file_description">view_file</string>
+
+    <!-- пункты меню -->
+    <string name="add_file">Добавить файл</string>
+    <string name="delete_file">Удалить файл</string>
 </resources>
