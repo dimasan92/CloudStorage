@@ -12,6 +12,7 @@
     <!-- ошибки соединения/сети -->
     <string name="not_net">Отсутствует подключение к сети</string>
     <string name="server_attempt_fail">Не удалось подключиться к серверу</string>
+    <string name="server_lost">Нет связи с сервером!</string>
 
     <!-- сообщения/ответы пользователя -->
     <string name="fields_not_filled">Не все поля заполнены!</string>

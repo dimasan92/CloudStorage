@@ -62,7 +62,25 @@ public class ServerConnectionService extends Service {
         });
     }
 
-    private void listeningToServer() {
+    public void sendMsg(String msg) {
+        executor.submit(() -> {
+            try {
+                long beginTime = System.currentTimeMillis();
+                while (!connected) {
+                    long time = System.currentTimeMillis() - beginTime;
+                    if (time >= 5000) {
+                        throw new IOException();
+                    }
+                }
+                outData.writeUTF(msg);
+                outData.flush();
+            } catch (IOException e) {
+                handler.sendEmptyMessage(R.string.server_lost);
+            }
+        });
+    }
+
+        private void listeningToServer() {
 //        try {
 //            // регистрация/авторизация
 //            socket.setSoTimeout(30000);
