@@ -1,1 +1,1 @@
-include ':main', ':common'
+include ':main', ':common', ':services'
