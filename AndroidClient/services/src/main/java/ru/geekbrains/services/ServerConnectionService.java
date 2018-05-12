@@ -6,10 +6,22 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import common.Constants;
+
 public class ServerConnectionService extends Service {
+
+    private static final String IP_SERVER = "192.168.1.52";
+
+    private Socket socket;
+    private DataInputStream inData;
+    private DataOutputStream outData;
 
     private Handler handler;            // сообщения от сервера в активити
     private ExecutorService executor;   // управляет потоками отправки и получения сообщений
@@ -29,6 +41,90 @@ public class ServerConnectionService extends Service {
         binder = new ConnectBinder();
         executor = Executors.newFixedThreadPool(2);
         connected = false;
+    }
+
+    public boolean isConnected() {
+        return connected;
+    }
+
+    // подключение к серверу
+    public void connect() {
+        executor.submit(() -> {
+            try {
+                socket = new Socket(IP_SERVER, Constants.SERVER_PORT);
+                inData = new DataInputStream(socket.getInputStream());
+                outData = new DataOutputStream(socket.getOutputStream());
+                connected = true;
+                listeningToServer();
+            } catch (IOException e) {
+                handler.sendEmptyMessage(R.string.server_attempt_fail);
+            }
+        });
+    }
+
+    private void listeningToServer() {
+//        try {
+//            // регистрация/авторизация
+//            socket.setSoTimeout(30000);
+//            label:
+//            while (!socket.isClosed()) {
+//                String msg = inData.readUTF();
+//                switch (msg) {
+//                    case Constants.REG_SUCCESS:
+//                        handler.sendEmptyMessage(R.string.reg_success);
+//                        break;
+//                    case Constants.REG_NICK_ALREADY_EXIST:
+//                        handler.sendEmptyMessage(R.string.reg_nick_already_exist);
+//                        break;
+//                    case Constants.REG_FAILURE:
+//                        handler.sendEmptyMessage(R.string.reg_failure);
+//                        break;
+//                    case Constants.AUTH_SUCCESS:
+//                        handler.sendEmptyMessage(R.string.auth_success);
+//                        nickname = inData.readUTF();
+//                        break label;
+//                    case Constants.AUTH_NICK_IS_BUSY:
+//                        handler.sendEmptyMessage(R.string.auth_nick_is_busy);
+//                        break;
+//                    case Constants.AUTH_NICK_NOT_EXIST:
+//                        handler.sendEmptyMessage(R.string.auth_nick_not_exist);
+//                        break;
+//                    case Constants.AUTH_FAILURE:
+//                        handler.sendEmptyMessage(R.string.auth_failure);
+//                        break;
+//                }
+//            }
+//            // общение с сервером
+//            socket.setSoTimeout(0);
+//            while (!socket.isClosed()) {
+//                String msg = inData.readUTF();
+//                if (msg.startsWith("/")) {
+//                    if (msg.startsWith(Constants.ADD_FILE_RESPONSE)) {
+//                        Message message = handler.obtainMessage();
+//                        message.what = R.string.add_file_processing;
+//                        message.obj = msg.split("\\s")[1];
+//                        handler.sendMessage(message);
+//                    } else if (msg.equals(Constants.ADD_FILE_ALREADY)) {
+//                        handler.sendEmptyMessage(R.string.add_file_already);
+//                    } else if (msg.equals(Constants.ADD_FILE_SUCCESS)) {
+//                        handler.sendEmptyMessage(R.string.add_file_success);
+//                    } else if (msg.equals(Constants.ADD_FILE_FAIL)) {
+//                        handler.sendEmptyMessage(R.string.add_file_fail);
+//                    } else if (msg.equals(Constants.DELETE_FILE_SUCCESS)) {
+//                        handler.sendEmptyMessage(R.string.delete_file_from_server_success);
+//                    } else if (msg.equals(Constants.DELETE_FILE_NOT_EXIST)) {
+//                        handler.sendEmptyMessage(R.string.delete_file_from_server_not_exist);
+//                    } else if (msg.equals(Constants.DELETE_FILE_FAIL)) {
+//                        handler.sendEmptyMessage(R.string.delete_file_from_server_fail);
+//                    }
+//                }
+//            }
+//        } catch (SocketException e) {
+//        } catch (IOException e) {
+//            handler.sendEmptyMessage(R.string.server_lost);
+//        } finally {
+//            disconnect();
+//        }
     }
 
     // возвращает Binder в методе onServiceConnected()
