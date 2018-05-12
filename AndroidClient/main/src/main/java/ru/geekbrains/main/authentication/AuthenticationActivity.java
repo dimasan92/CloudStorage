@@ -1,8 +1,12 @@
 package ru.geekbrains.main.authentication;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.IBinder;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +22,15 @@ import android.widget.Toast;
 
 import common.Constants;
 import ru.geekbrains.main.R;
+import ru.geekbrains.services.ServerConnectionService;
 
 public class AuthenticationActivity extends AppCompatActivity {
+
+    // сервис соединения с сервером
+    private ServerConnectionService serverConnectionService;
+    private ServiceConnection serviceConnection;
+    private Intent intentConnection;
+    private boolean bound;
 
     // флаг для управления окнами регистрации/авторизации
     private boolean registration = false;
@@ -54,6 +65,15 @@ public class AuthenticationActivity extends AppCompatActivity {
         btnAuth = findViewById(R.id.btn_auth);
         btnSend = findViewById(R.id.btn_submit);
         progressBar = findViewById(R.id.progress_bar);
+
+        // запускаем сервисы
+        intentConnection = new Intent(this, ServerConnectionService.class);
+        startService(intentConnection);
+
+        // привязываемся к сервису, управляющему соединением с сервером
+        bound = false;
+        serviceConnection = serverServiceConnection();
+        bindService(intentConnection, serviceConnection, 0);
     }
 
     // обработчк нажатий кнопоки "Регистрация"
@@ -145,5 +165,23 @@ public class AuthenticationActivity extends AppCompatActivity {
             return netInfo != null && netInfo.isConnected();
         }
         return false;
+    }
+
+    // экземпляр для подключения к сервису соединения с сервером
+    private ServiceConnection serverServiceConnection() {
+        return new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                serverConnectionService =
+                        ((ServerConnectionService.ConnectBinder) service).getService();
+                serverConnectionService.setHandler(authHandler());
+                bound = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                bound = false;
+            }
+        };
     }
 }
