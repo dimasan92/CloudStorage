@@ -8,6 +8,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Collections;
 
 class UserHandler implements Runnable {
 
@@ -18,6 +19,10 @@ class UserHandler implements Runnable {
     private DataOutputStream outData;
 
     private String nickname;
+
+    String getNickname() {
+        return nickname;
+    }
 
     UserHandler(ServerCore server, Socket socket) {
         this.server = server;
@@ -81,29 +86,29 @@ class UserHandler implements Runnable {
     private boolean reg(String requestMsg) {
         String responseMsg = server.getRegService().registrationOfUser(requestMsg);
         sendMsg(responseMsg);
-//        if (responseMsg.equals(Constants.REG_SUCCESS)) {
-//            // разбираем на массив {"/reg", "nickname login password"}
-//            // при разборе в auth - nickname отбрасывается
-//            String subMsg = requestMsg.split("\\s", 2)[1];
-//            return auth(subMsg);
-//        }
+        if (responseMsg.equals(Constants.REG_SUCCESS)) {
+            // разбираем на массив {"/reg", "nickname login password"}
+            // при разборе в auth - nickname отбрасывается
+            String subMsg = requestMsg.split("\\s", 2)[1];
+            return auth(subMsg);
+        }
         return false;
     }
 
     // запрос на авторизацию
     private boolean auth(String requestMsg) {
-//        String[] auth = server.getAuthService().getAuthorizedUser(requestMsg, server.getListOfUsers());
-//        nickname = auth[0];
-//        sendMsg(auth[1]);
-//        if (nickname != null) {
-//            sendMsg(nickname);
-//            server.subscribe(this);
+        String[] auth = server.getAuthService().getAuthorizedUser(requestMsg, server.getListOfUsers());
+        nickname = auth[0];
+        sendMsg(auth[1]);
+        if (nickname != null) {
+            sendMsg(nickname);
+            server.subscribe(this);
 //            folder = server.getStorageService().getUserFolder(nickname);
 //            if (folder.list() != null) {
 //                Collections.addAll(files, folder.list());
 //            }
-//            return true;
-//        }
+            return true;
+        }
         return false;
     }
 

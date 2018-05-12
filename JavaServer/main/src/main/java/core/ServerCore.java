@@ -1,6 +1,10 @@
 package core;
 
+import authorization.AuthService;
+import authorization.SimpleAuthService;
 import common.Constants;
+import database.CloudStorageDatabase;
+import database.Database;
 import registration.RegService;
 import registration.SimpleRegService;
 
@@ -24,25 +28,30 @@ public class ServerCore {
     private ExecutorService usersExecutorService;   // управление нитями для пользователей
 
     private RegService regService;                  // сервис регистрации пользователей
+    private AuthService authService;                // сервис аунтификации пользователей
 
     RegService getRegService() {
         return regService;
     }
 
+    AuthService getAuthService() {
+        return authService;
+    }
+
     public ServerCore() {
         connectedUsers = Collections.synchronizedList(new ArrayList<>());
-//        Database dataBase = new CloudStorageDatabase();
-//        dataBase.connect();
+        Database dataBase = new CloudStorageDatabase();
+        dataBase.connect();
 //        storageService = new SimpleFileStorage(dataBase);
         regService = new SimpleRegService(dataBase, storageService);
-//        authService = new SimpleAuthService(dataBase);
+        authService = new SimpleAuthService(dataBase);
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
             new Thread(startServer()).start();
             startInputTerminal(br);
         } catch (IOException e) {
             System.err.println("Ошибка при запуске сервера(порт " + Constants.SERVER_PORT + "): " + e.getMessage());
         } finally {
-//            dataBase.disconnect();
+            dataBase.disconnect();
             try {
                 serverSocket.close();
             } catch (IOException e) {
@@ -110,5 +119,23 @@ public class ServerCore {
             System.out.println("Клиент присоединился: IP: " + socket.getInetAddress() + " Порт: " + socket.getLocalPort());
             usersExecutorService.submit(new UserHandler(this, socket));
         }
+    }
+
+    void subscribe(UserHandler user) {
+        if (!connectedUsers.contains(user)) {
+            connectedUsers.add(user);
+        }
+    }
+
+    void unsubscribe(UserHandler user) {
+        connectedUsers.remove(user);
+    }
+
+    List<String> getListOfUsers() {
+        List<String> listOfUsers = new ArrayList<>();
+        for (UserHandler user : connectedUsers) {
+            listOfUsers.add(user.getNickname());
+        }
+        return listOfUsers;
     }
 }

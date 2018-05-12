@@ -16,6 +16,10 @@ public class Constants {
     public static final String REG_NICK_ALREADY_EXIST = "/regNickExist";
     public static final String REG_FAILURE = "/regFail";
     public static final String AUTH_REQUEST = "/auth";
+    public static final String AUTH_SUCCESS = "/authOk";
+    public static final String AUTH_NICK_IS_BUSY = "/authNickBusy";
+    public static final String AUTH_NICK_NOT_EXIST = "/authNickNotExist";
+    public static final String AUTH_FAILURE = "/authFail";
 
     // сообщения клиент/сервер
     public static final String END_SESSION = "/end";
