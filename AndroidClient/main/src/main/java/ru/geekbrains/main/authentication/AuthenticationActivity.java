@@ -208,38 +208,38 @@ public class AuthenticationActivity extends AppCompatActivity {
                                 Toast.LENGTH_LONG).show();
                         connectionViewEnabled(true);
                         break;
-//                    case R.string.auth_success:
-//                        Toast.makeText(AuthenticationActivity.this, R.string.auth_success,
-//                                Toast.LENGTH_LONG).show();
-//                        if (bound) unbindService(serviceConnection);
-//                        bound = false;
-//                        startActivity(new Intent(AuthenticationActivity.this, StorageActivity.class));
-//                        break;
-//                    case R.string.auth_nick_is_busy:
-//                        Toast.makeText(AuthenticationActivity.this, R.string.auth_nick_is_busy,
-//                                Toast.LENGTH_LONG).show();
-//                        connectionViewEnabled(true);
-//                        break;
-//                    case R.string.auth_nick_not_exist:
-//                        Toast.makeText(AuthenticationActivity.this, R.string.auth_nick_not_exist,
-//                                Toast.LENGTH_LONG).show();
-//                        connectionViewEnabled(true);
-//                        break;
-//                    case R.string.auth_failure:
-//                        Toast.makeText(AuthenticationActivity.this, R.string.auth_failure,
-//                                Toast.LENGTH_LONG).show();
-//                        connectionViewEnabled(true);
-//                        break;
+                    case R.string.auth_success:
+                        Toast.makeText(AuthenticationActivity.this, R.string.auth_success,
+                                Toast.LENGTH_LONG).show();
+                        if (bound) unbindService(serviceConnection);
+                        bound = false;
+                        startActivity(new Intent(AuthenticationActivity.this, StorageActivity.class));
+                        break;
+                    case R.string.auth_nick_is_busy:
+                        Toast.makeText(AuthenticationActivity.this, R.string.auth_nick_is_busy,
+                                Toast.LENGTH_LONG).show();
+                        connectionViewEnabled(true);
+                        break;
+                    case R.string.auth_nick_not_exist:
+                        Toast.makeText(AuthenticationActivity.this, R.string.auth_nick_not_exist,
+                                Toast.LENGTH_LONG).show();
+                        connectionViewEnabled(true);
+                        break;
+                    case R.string.auth_failure:
+                        Toast.makeText(AuthenticationActivity.this, R.string.auth_failure,
+                                Toast.LENGTH_LONG).show();
+                        connectionViewEnabled(true);
+                        break;
                     case R.string.server_lost:
                         Toast.makeText(AuthenticationActivity.this, R.string.server_lost,
                                 Toast.LENGTH_LONG).show();
                         connectionViewEnabled(true);
                         break;
-//                    case R.string.server_attempt_fail:
-//                        Toast.makeText(AuthenticationActivity.this, R.string.server_attempt_fail,
-//                                Toast.LENGTH_LONG).show();
-//                        connectionViewEnabled(true);
-//                        break;
+                    case R.string.server_attempt_fail:
+                        Toast.makeText(AuthenticationActivity.this, R.string.server_attempt_fail,
+                                Toast.LENGTH_LONG).show();
+                        connectionViewEnabled(true);
+                        break;
                 }
             }
         };

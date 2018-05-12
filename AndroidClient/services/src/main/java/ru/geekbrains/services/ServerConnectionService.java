@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -29,6 +30,8 @@ public class ServerConnectionService extends Service {
 
     private ConnectBinder binder; // экземпляр для работы с сервисом из Activity
     private boolean connected;    // показывет, плдключен ли клиент к серверу
+
+    private String nickname;
 
 
     public void setHandler(Handler handler) {
@@ -85,7 +88,7 @@ public class ServerConnectionService extends Service {
         try {
             // регистрация/авторизация
             socket.setSoTimeout(30000);
-//            label:
+            label:
             while (!socket.isClosed()) {
                 String msg = inData.readUTF();
                 switch (msg) {
@@ -98,19 +101,19 @@ public class ServerConnectionService extends Service {
                     case Constants.REG_FAILURE:
                         handler.sendEmptyMessage(R.string.reg_failure);
                         break;
-//                    case Constants.AUTH_SUCCESS:
-//                        handler.sendEmptyMessage(R.string.auth_success);
-//                        nickname = inData.readUTF();
-//                        break label;
-//                    case Constants.AUTH_NICK_IS_BUSY:
-//                        handler.sendEmptyMessage(R.string.auth_nick_is_busy);
-//                        break;
-//                    case Constants.AUTH_NICK_NOT_EXIST:
-//                        handler.sendEmptyMessage(R.string.auth_nick_not_exist);
-//                        break;
-//                    case Constants.AUTH_FAILURE:
-//                        handler.sendEmptyMessage(R.string.auth_failure);
-//                        break;
+                    case Constants.AUTH_SUCCESS:
+                        nickname = inData.readUTF();
+                        handler.sendEmptyMessage(R.string.auth_success);
+                        break label;
+                    case Constants.AUTH_NICK_IS_BUSY:
+                        handler.sendEmptyMessage(R.string.auth_nick_is_busy);
+                        break;
+                    case Constants.AUTH_NICK_NOT_EXIST:
+                        handler.sendEmptyMessage(R.string.auth_nick_not_exist);
+                        break;
+                    case Constants.AUTH_FAILURE:
+                        handler.sendEmptyMessage(R.string.auth_failure);
+                        break;
                 }
             }
 //            // общение с сервером
