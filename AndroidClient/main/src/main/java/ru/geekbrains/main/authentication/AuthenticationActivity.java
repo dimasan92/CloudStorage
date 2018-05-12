@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.transition.TransitionManager;
@@ -35,6 +36,9 @@ public class AuthenticationActivity extends AppCompatActivity {
     private Intent intentConnection;
     private boolean bound;
 
+    // сервис работы с файлами
+    private Intent intentFiles;
+
     // флаг для управления окнами регистрации/авторизации
     private boolean registration = false;
 
@@ -54,6 +58,8 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (getIntent().getBooleanExtra("finish", false)) finish();
+
         super.onCreate(savedInstanceState);
         // находим все элементы интерфейса в xml
         setContentView(R.layout.activity_authentication);
@@ -71,7 +77,9 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         // запускаем сервисы
         intentConnection = new Intent(this, ServerConnectionService.class);
+                intentFiles = new Intent(this, FileStorageService.class);
         startService(intentConnection);
+                startService(intentFiles);
 
         // привязываемся к сервису, управляющему соединением с сервером
         bound = false;
@@ -243,5 +251,27 @@ public class AuthenticationActivity extends AppCompatActivity {
                 }
             }
         };
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle(R.string.exit_app);
+
+        adb.setPositiveButton(R.string.yes, (dialog, which) -> {
+            finish();
+            super.onBackPressed();
+        });
+        adb.setNegativeButton(R.string.no, (dialog, which) -> {
+        });
+        adb.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bound) unbindService(serviceConnection);
+        stopService(intentConnection);
+        stopService(intentFiles);
     }
 }
