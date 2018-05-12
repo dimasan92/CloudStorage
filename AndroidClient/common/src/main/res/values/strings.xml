@@ -8,4 +8,10 @@
     <string name="nickname">Имя пользователя</string>
     <string name="password">Пароль</string>
     <string name="send">Отправить</string>
+
+    <!-- ошибки соединения/сети -->
+    <string name="not_net">Отсутствует подключение к сети</string>
+
+    <!-- сообщения/ответы пользователя -->
+    <string name="fields_not_filled">Не все поля заполнены!</string>
 </resources>
