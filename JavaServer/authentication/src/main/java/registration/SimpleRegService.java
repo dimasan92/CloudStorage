@@ -2,6 +2,7 @@ package registration;
 
 import common.Constants;
 import database.Database;
+import storage.FileStorage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

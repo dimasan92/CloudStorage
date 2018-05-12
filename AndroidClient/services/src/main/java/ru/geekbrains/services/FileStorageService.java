@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -47,6 +48,40 @@ public class FileStorageService extends Service {
                 responseMsg.obj = filename;
                 handler.sendMessage(responseMsg);
             }
+        });
+    }
+
+    public void sendFileToServer(ExecutorService executor, DataOutputStream outData,
+                                 Context context, String path) {
+        executor.execute(() -> {
+            try (FileInputStream inFile = context.openFileInput(path)) {
+                outData.writeLong(context.getFileStreamPath(path).length());
+                System.out.println(context.getFileStreamPath(path).length());
+                byte[] buffer = new byte[8 * 1024];
+                int count;
+                while ((count = inFile.read(buffer)) != -1) {
+                    outData.write(buffer, 0, count);
+                }
+                outData.flush();
+            } catch (FileNotFoundException e) {
+                handler.sendEmptyMessage(R.string.file_not_found);
+            } catch (IOException e) {
+                handler.sendEmptyMessage(R.string.add_file_fail);
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void deleteFileFromDevice(String filename, Context context) {
+        executor.execute(() -> {
+            Message message = handler.obtainMessage();
+            message.obj = filename;
+            if (context.deleteFile(filename)) {
+                message.what = R.string.delete_file_from_device_success;
+            } else {
+                message.what = R.string.delete_file_from_device_fail;
+            }
+            handler.sendMessage(message);
         });
     }
 

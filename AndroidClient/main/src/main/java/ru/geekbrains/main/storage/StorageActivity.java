@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import common.Constants;
 import ru.geekbrains.main.R;
 import ru.geekbrains.main.authentication.AuthenticationActivity;
 import ru.geekbrains.services.FileStorageService;
@@ -219,62 +220,62 @@ public class StorageActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-//                    case R.string.copy_file_success:
-//                        Toast.makeText(StorageActivity.this, R.string.copy_file_success,
-//                                Toast.LENGTH_SHORT).show();
-//                        String filename = (String) msg.obj;
-//                        addFileToList(filename);
-//                        serverConnectionService.sendMsg(Constants.ADD_FILE + " " + filename);
-//                        break;
-//                    case R.string.file_not_found:
-//                        Toast.makeText(StorageActivity.this, R.string.file_not_found,
-//                                Toast.LENGTH_LONG).show();
-//                        break;
-//                    case R.string.copy_file_error:
-//                        Toast.makeText(StorageActivity.this, R.string.copy_file_error,
-//                                Toast.LENGTH_LONG).show();
-//                        break;
-//                    case R.string.add_file_processing:
-//                        Toast.makeText(StorageActivity.this, R.string.add_file_processing,
-//                                Toast.LENGTH_SHORT).show();
-//                        fileStorageService.sendFileToServer(serverConnectionService.getExecutor(),
-//                                serverConnectionService.getOutData(), StorageActivity.this,
-//                                (String) msg.obj);
-//                        break;
-//                    case R.string.add_file_already:
-//                        Toast.makeText(StorageActivity.this, R.string.add_file_already,
-//                                Toast.LENGTH_LONG).show();
-//                        break;
-//                    case R.string.add_file_success:
-//                        Toast.makeText(StorageActivity.this, R.string.add_file_success,
-//                                Toast.LENGTH_SHORT).show();
-//                        break;
-//                    case R.string.add_file_fail:
-//                        Toast.makeText(StorageActivity.this, R.string.add_file_fail,
-//                                Toast.LENGTH_LONG).show();
-//                        break;
-//                    case R.string.delete_file_from_device_success:
-//                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_device_success,
-//                                Toast.LENGTH_SHORT).show();
-//                        serverConnectionService.sendMsg(Constants.DELETE_FILE + " " + msg.obj);
-//                        break;
-//                    case R.string.delete_file_from_device_fail:
-//                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_device_fail,
-//                                Toast.LENGTH_LONG).show();
-//                        addFileToList((String) msg.obj);
-//                        break;
-//                    case R.string.delete_file_from_server_success:
-//                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_server_success,
-//                                Toast.LENGTH_SHORT).show();
-//                        break;
-//                    case R.string.delete_file_from_server_not_exist:
-//                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_server_not_exist,
-//                                Toast.LENGTH_LONG).show();
-//                        break;
-//                    case R.string.delete_file_from_server_fail:
-//                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_server_fail,
-//                                Toast.LENGTH_LONG).show();
-//                        break;
+                    case R.string.copy_file_success:
+                        Toast.makeText(StorageActivity.this, R.string.copy_file_success,
+                                Toast.LENGTH_SHORT).show();
+                        String filename = (String) msg.obj;
+                        addFileToList(filename);
+                        serverConnectionService.sendMsg(Constants.ADD_FILE + " " + filename);
+                        break;
+                    case R.string.file_not_found:
+                        Toast.makeText(StorageActivity.this, R.string.file_not_found,
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case R.string.copy_file_error:
+                        Toast.makeText(StorageActivity.this, R.string.copy_file_error,
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case R.string.add_file_processing:
+                        Toast.makeText(StorageActivity.this, R.string.add_file_processing,
+                                Toast.LENGTH_SHORT).show();
+                        fileStorageService.sendFileToServer(serverConnectionService.getExecutor(),
+                                serverConnectionService.getOutData(), StorageActivity.this,
+                                (String) msg.obj);
+                        break;
+                    case R.string.add_file_already:
+                        Toast.makeText(StorageActivity.this, R.string.add_file_already,
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case R.string.add_file_success:
+                        Toast.makeText(StorageActivity.this, R.string.add_file_success,
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.string.add_file_fail:
+                        Toast.makeText(StorageActivity.this, R.string.add_file_fail,
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case R.string.delete_file_from_device_success:
+                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_device_success,
+                                Toast.LENGTH_SHORT).show();
+                        serverConnectionService.sendMsg(Constants.DELETE_FILE + " " + msg.obj);
+                        break;
+                    case R.string.delete_file_from_device_fail:
+                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_device_fail,
+                                Toast.LENGTH_LONG).show();
+                        addFileToList((String) msg.obj);
+                        break;
+                    case R.string.delete_file_from_server_success:
+                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_server_success,
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.string.delete_file_from_server_not_exist:
+                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_server_not_exist,
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case R.string.delete_file_from_server_fail:
+                        Toast.makeText(StorageActivity.this, R.string.delete_file_from_server_fail,
+                                Toast.LENGTH_LONG).show();
+                        break;
                     case R.string.server_lost:
                         Toast.makeText(StorageActivity.this, R.string.server_lost,
                                 Toast.LENGTH_LONG).show();

@@ -21,6 +21,24 @@ public class Constants {
     public static final String AUTH_NICK_NOT_EXIST = "/authNickNotExist";
     public static final String AUTH_FAILURE = "/authFail";
 
+    // данные пользователей
+    public static final String SERVER_MAIN_DIRECTORY = "UserData\\";
+
     // сообщения клиент/сервер
+    public static final String ADD_FILE = "/addFile";
+    public static final String ADD_FILE_RESPONSE = "/addFileResponse";
+    public static final String ADD_FILE_SUCCESS = "/addFileSuccess";
+    public static final String ADD_FILE_ALREADY = "/addFileAlready";
+    public static final String ADD_FILE_FAIL = "/addFileFail";
+    public static final String DELETE_FILE = "/deleteFile";
+    public static final String DELETE_FILE_SUCCESS = "/deleteFileSuccess";
+    public static final String DELETE_FILE_NOT_EXIST = "/deleteFileNotExist";
+    public static final String DELETE_FILE_FAIL = "/deleteFileFail";
+    public static final String REPLACE_FILE = "/replaceFile";
+    public static final String REPLACE_FILE_SUCCESS = "/replaceFileSuccess";
+    public static final String REPLACE_FILE_FAIL = "/replaceFileFail";
+    public static final String GET_FILE = "/getFile";
+    public static final String GET_FILE_SUCCESS = "/getFileSuccess";
+    public static final String GET_FILE_FAIL = "/getFileFail";
     public static final String END_SESSION = "/end";
 }

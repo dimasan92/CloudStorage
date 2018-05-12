@@ -7,6 +7,8 @@ import database.CloudStorageDatabase;
 import database.Database;
 import registration.RegService;
 import registration.SimpleRegService;
+import storage.FileStorage;
+import storage.SimpleFileStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,6 +31,7 @@ public class ServerCore {
 
     private RegService regService;                  // сервис регистрации пользователей
     private AuthService authService;                // сервис аунтификации пользователей
+    private FileStorage storageService;             // сервис работы с файлами пользователя
 
     RegService getRegService() {
         return regService;
@@ -38,11 +41,15 @@ public class ServerCore {
         return authService;
     }
 
+    FileStorage getStorageService() {
+        return storageService;
+    }
+
     public ServerCore() {
         connectedUsers = Collections.synchronizedList(new ArrayList<>());
         Database dataBase = new CloudStorageDatabase();
         dataBase.connect();
-//        storageService = new SimpleFileStorage(dataBase);
+        storageService = new SimpleFileStorage(dataBase);
         regService = new SimpleRegService(dataBase, storageService);
         authService = new SimpleAuthService(dataBase);
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
@@ -82,9 +89,9 @@ public class ServerCore {
                         return;
                     case Constants.USER_LIST:
                         System.out.println("Подключеные пользователи:");
-//                        List<String> users = getListOfUsers();
-//                        for (String user : users)
-//                            System.out.println(user);
+                        List<String> users = getListOfUsers();
+                        for (String user : users)
+                            System.out.println(user);
                         break;
                 }
             } catch (IOException e) {

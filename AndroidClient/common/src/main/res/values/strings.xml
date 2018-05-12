@@ -36,6 +36,15 @@
     <string name="file_not_found">Файл не найден</string>
     <string name="copy_file_error">При копировании файла произошла ошибка</string>
     <string name="copy_file_success">Успешно скопирован файл</string>
+    <string name="add_file_processing">Добавление файла на сервер…</string>
+    <string name="add_file_already">Файл уже существует на сервере!</string>
+    <string name="add_file_fail">Ошибка при добавлении файла на сервер</string>
+    <string name="add_file_success">Файл успешно добавлен на сервер</string>
+    <string name="delete_file_from_device_success">Файл успешно удален с устройства</string>
+    <string name="delete_file_from_device_fail">Не удалось удалить файл с устройства</string>
+    <string name="delete_file_from_server_success">Файл успешно удален с сервера</string>
+    <string name="delete_file_from_server_not_exist">Файл на сервере не найден</string>
+    <string name="delete_file_from_server_fail">Не удалось удалить файл с сервера</string>
 
     <!-- заголовки активити -->
     <string name="storage_activity_title">Файлы</string>

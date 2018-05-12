@@ -2,13 +2,12 @@ package core;
 
 import common.Constants;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 class UserHandler implements Runnable {
 
@@ -20,6 +19,9 @@ class UserHandler implements Runnable {
 
     private String nickname;
 
+        private File folder;
+    private List<String> files;
+
     String getNickname() {
         return nickname;
     }
@@ -28,7 +30,7 @@ class UserHandler implements Runnable {
         this.server = server;
         this.socket = socket;
         nickname = "Никнейм не назначен";
-//        files = new ArrayList<>();
+        files = new ArrayList<>();
     }
 
     @Override
@@ -48,15 +50,15 @@ class UserHandler implements Runnable {
                         if (auth(requestMsg)) break;
                     }
                 }
-//                // цикл общения сервера с пользователем
-//                while (!socket.isClosed()) {
-//                    String msg = inData.readUTF();
-//                    if (msg.startsWith(Constants.ADD_FILE)) addFile(msg);
-//                    else if (msg.startsWith(Constants.DELETE_FILE)) deleteFile(msg);
+                // цикл общения сервера с пользователем
+                while (!socket.isClosed()) {
+                    String msg = inData.readUTF();
+                    if (msg.startsWith(Constants.ADD_FILE)) addFile(msg);
+                    else if (msg.startsWith(Constants.DELETE_FILE)) deleteFile(msg);
 ////                    else if (msg.equals(Constants.REPLACE_FILE)) replaceFile();
 ////                    else if (msg.equals(Constants.GET_FILE)) getFile();
 ////                    else if (msg.equals(Constants.END_SESSION)) break;
-//                }
+                }
             } catch (SocketException | EOFException e) {
                 System.out.println("Клиент " + nickname + " IP:" + socket.getInetAddress() +
                         " Порт:" + socket.getLocalPort() + " отсоединился");
@@ -103,14 +105,91 @@ class UserHandler implements Runnable {
         if (nickname != null) {
             sendMsg(nickname);
             server.subscribe(this);
-//            folder = server.getStorageService().getUserFolder(nickname);
-//            if (folder.list() != null) {
-//                Collections.addAll(files, folder.list());
-//            }
+            folder = server.getStorageService().getUserFolder(nickname);
+            if (folder.list() != null) {
+                Collections.addAll(files, folder.list());
+            }
             return true;
         }
         return false;
     }
+
+    // добавоение файла на сервер
+    private void addFile(String msg) {
+        String filename = msg.split("\\s")[1];
+        System.out.println("От пользователя " + nickname + " IP:" + socket.getInetAddress() +
+                " Порт:" + socket.getLocalPort() + " поступил запрос на добавление файла: " + filename);
+        if (!files.contains(filename)) {
+            sendMsg(Constants.ADD_FILE_RESPONSE + " " + filename);
+            if (server.getStorageService().writeFileFromUser(inData, folder + "\\" + filename)) {
+                files.add(filename);
+                sendMsg(Constants.ADD_FILE_SUCCESS);
+                System.out.println("Файл " + filename + " добавлен");
+            } else {
+                sendMsg(Constants.ADD_FILE_FAIL);
+            }
+        } else {
+            sendMsg(Constants.ADD_FILE_ALREADY);
+            System.out.println("Файл уже добавлен: " + filename);
+        }
+    }
+
+    private void deleteFile(String msg) {
+        String filename = msg.split("\\s")[1];
+        System.out.println("От пользователя " + nickname + " IP:" + socket.getInetAddress() +
+                " Порт:" + socket.getLocalPort() + " поступил запрос на удаление файла: " + filename);
+        if (files.contains(filename)) {
+            if (server.getStorageService().removeFile(folder + "\\" + filename)) {
+                files.remove(filename);
+                sendMsg(Constants.DELETE_FILE_SUCCESS);
+                System.out.println("Файл " + filename + " удален");
+            } else {
+                sendMsg(Constants.DELETE_FILE_FAIL);
+                System.out.println("Не удалось удалить файл " + filename);
+            }
+        } else {
+            sendMsg(Constants.DELETE_FILE_NOT_EXIST);
+            System.out.println("Файл не существует на сервере " + filename);
+        }
+    }
+
+//    private void replaceFile() {
+//        try {
+//            String filename = inData.readUTF();
+//            System.out.println("От пользователя " + nickname + " IP:" + socket.getInetAddress() +
+//                    " Порт:" + socket.getLocalPort() + " поступил запрос на замену файла: " + filename);
+//            if (files.contains(filename) &&
+//                    server.getStorageService().replaceFile(inData, folder + filename)) {
+//                sendMsg(Constants.REPLACE_FILE_SUCCESS);
+//                System.out.println("Файл " + filename + " заменен");
+//            } else {
+//                sendMsg(Constants.REPLACE_FILE_FAIL);
+//                System.out.println("Не удалось заменить файл: " + filename);
+//            }
+//        } catch (IOException e) {
+//            System.out.println("Ошибка при получении файла от пользователя " + socket.getInetAddress() + " "
+//                    + socket.getLocalPort() + ". Ошибка: " + e.getMessage());
+//        }
+//    }
+
+//    private void getFile() {
+//        try {
+//            String filename = inData.readUTF();
+//            System.out.println("От пользователя " + nickname + " IP:" + socket.getInetAddress() +
+//                    " Порт:" + socket.getLocalPort() + " поступил запрос на получение файла: " + filename);
+//            if (files.contains(filename)) {
+//                server.getStorageService().sendFileToUser(outData, folder.getPath(), filename);
+//                sendMsg(Constants.GET_FILE_SUCCESS);
+//                System.out.println("Файл " + filename + " отправлен");
+//            } else {
+//                sendMsg(Constants.GET_FILE_FAIL);
+//                System.out.println("Не удалось отправить файл " + filename);
+//            }
+//        } catch (IOException e) {
+//            System.out.println("Ошибка при передаче файла пользователю " + socket.getInetAddress() + " "
+//                    + socket.getLocalPort() + ". Ошибка: " + e.getMessage());
+//        }
+//    }
 
     // отправка сообщений клиенту
     private void sendMsg(String msg) {

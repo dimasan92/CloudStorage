@@ -38,6 +38,14 @@ public class ServerConnectionService extends Service {
         this.handler = handler;
     }
 
+    public DataOutputStream getOutData() {
+        return outData;
+    }
+
+    public ExecutorService getExecutor() {
+        return executor;
+    }
+
     //вызывается при запуске сервиса
     @Override
     public void onCreate() {
@@ -84,7 +92,7 @@ public class ServerConnectionService extends Service {
         });
     }
 
-        private void listeningToServer() {
+    private void listeningToServer() {
         try {
             // регистрация/авторизация
             socket.setSoTimeout(30000);
@@ -116,31 +124,31 @@ public class ServerConnectionService extends Service {
                         break;
                 }
             }
-//            // общение с сервером
-//            socket.setSoTimeout(0);
-//            while (!socket.isClosed()) {
-//                String msg = inData.readUTF();
-//                if (msg.startsWith("/")) {
-//                    if (msg.startsWith(Constants.ADD_FILE_RESPONSE)) {
-//                        Message message = handler.obtainMessage();
-//                        message.what = R.string.add_file_processing;
-//                        message.obj = msg.split("\\s")[1];
-//                        handler.sendMessage(message);
-//                    } else if (msg.equals(Constants.ADD_FILE_ALREADY)) {
-//                        handler.sendEmptyMessage(R.string.add_file_already);
-//                    } else if (msg.equals(Constants.ADD_FILE_SUCCESS)) {
-//                        handler.sendEmptyMessage(R.string.add_file_success);
-//                    } else if (msg.equals(Constants.ADD_FILE_FAIL)) {
-//                        handler.sendEmptyMessage(R.string.add_file_fail);
-//                    } else if (msg.equals(Constants.DELETE_FILE_SUCCESS)) {
-//                        handler.sendEmptyMessage(R.string.delete_file_from_server_success);
-//                    } else if (msg.equals(Constants.DELETE_FILE_NOT_EXIST)) {
-//                        handler.sendEmptyMessage(R.string.delete_file_from_server_not_exist);
-//                    } else if (msg.equals(Constants.DELETE_FILE_FAIL)) {
-//                        handler.sendEmptyMessage(R.string.delete_file_from_server_fail);
-//                    }
-//                }
-//            }
+            // общение с сервером
+            socket.setSoTimeout(0);
+            while (!socket.isClosed()) {
+                String msg = inData.readUTF();
+                if (msg.startsWith("/")) {
+                    if (msg.startsWith(Constants.ADD_FILE_RESPONSE)) {
+                        Message message = handler.obtainMessage();
+                        message.what = R.string.add_file_processing;
+                        message.obj = msg.split("\\s")[1];
+                        handler.sendMessage(message);
+                    } else if (msg.equals(Constants.ADD_FILE_ALREADY)) {
+                        handler.sendEmptyMessage(R.string.add_file_already);
+                    } else if (msg.equals(Constants.ADD_FILE_SUCCESS)) {
+                        handler.sendEmptyMessage(R.string.add_file_success);
+                    } else if (msg.equals(Constants.ADD_FILE_FAIL)) {
+                        handler.sendEmptyMessage(R.string.add_file_fail);
+                    } else if (msg.equals(Constants.DELETE_FILE_SUCCESS)) {
+                        handler.sendEmptyMessage(R.string.delete_file_from_server_success);
+                    } else if (msg.equals(Constants.DELETE_FILE_NOT_EXIST)) {
+                        handler.sendEmptyMessage(R.string.delete_file_from_server_not_exist);
+                    } else if (msg.equals(Constants.DELETE_FILE_FAIL)) {
+                        handler.sendEmptyMessage(R.string.delete_file_from_server_fail);
+                    }
+                }
+            }
         } catch (SocketException e) {
         } catch (IOException e) {
             handler.sendEmptyMessage(R.string.server_lost);
