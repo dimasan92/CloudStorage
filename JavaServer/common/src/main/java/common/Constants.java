@@ -34,6 +34,8 @@ public class Constants {
     public static final String DELETE_FILE_SUCCESS = "/deleteFileSuccess";
     public static final String DELETE_FILE_NOT_EXIST = "/deleteFileNotExist";
     public static final String DELETE_FILE_FAIL = "/deleteFileFail";
+    public static final String LIST_OF_FILES_GET = "/getListOfFiles";
+    public static final String LIST_OF_FILES_SEND = "/sendListOfFiles";
     public static final String REPLACE_FILE = "/replaceFile";
     public static final String REPLACE_FILE_SUCCESS = "/replaceFileSuccess";
     public static final String REPLACE_FILE_FAIL = "/replaceFileFail";

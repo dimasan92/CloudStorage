@@ -19,7 +19,7 @@ class UserHandler implements Runnable {
 
     private String nickname;
 
-        private File folder;
+    private File folder;
     private List<String> files;
 
     String getNickname() {
@@ -55,6 +55,7 @@ class UserHandler implements Runnable {
                     String msg = inData.readUTF();
                     if (msg.startsWith(Constants.ADD_FILE)) addFile(msg);
                     else if (msg.startsWith(Constants.DELETE_FILE)) deleteFile(msg);
+                    else if (msg.startsWith(Constants.LIST_OF_FILES_GET)) sendListOfFiles();
 ////                    else if (msg.equals(Constants.REPLACE_FILE)) replaceFile();
 ////                    else if (msg.equals(Constants.GET_FILE)) getFile();
 ////                    else if (msg.equals(Constants.END_SESSION)) break;
@@ -151,6 +152,15 @@ class UserHandler implements Runnable {
             sendMsg(Constants.DELETE_FILE_NOT_EXIST);
             System.out.println("Файл не существует на сервере " + filename);
         }
+    }
+
+    private void sendListOfFiles() {
+        StringBuilder responseString = new StringBuilder();
+        responseString.append(Constants.LIST_OF_FILES_SEND).append(" ");
+        for (String file : files) {
+            responseString.append(file).append(" ");
+        }
+        sendMsg(responseString.toString());
     }
 
 //    private void replaceFile() {

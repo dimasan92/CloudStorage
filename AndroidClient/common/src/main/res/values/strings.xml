@@ -45,6 +45,7 @@
     <string name="delete_file_from_server_success">Файл успешно удален с сервера</string>
     <string name="delete_file_from_server_not_exist">Файл на сервере не найден</string>
     <string name="delete_file_from_server_fail">Не удалось удалить файл с сервера</string>
+    <string name="list_of_server_files">List of files from server</string>
 
     <!-- заголовки активити -->
     <string name="storage_activity_title">Файлы</string>
@@ -55,4 +56,5 @@
     <!-- пункты меню -->
     <string name="add_file">Добавить файл</string>
     <string name="delete_file">Удалить файл</string>
+    <string name="synchronize_files">Синхронизировать</string>
 </resources>

@@ -146,6 +146,11 @@ public class ServerConnectionService extends Service {
                         handler.sendEmptyMessage(R.string.delete_file_from_server_not_exist);
                     } else if (msg.equals(Constants.DELETE_FILE_FAIL)) {
                         handler.sendEmptyMessage(R.string.delete_file_from_server_fail);
+                    } else if(msg.startsWith(Constants.LIST_OF_FILES_SEND)){
+                        Message message = handler.obtainMessage();
+                        message.what = R.string.list_of_server_files;
+                        message.obj = msg;
+                        handler.sendMessage(message);
                     }
                 }
             }

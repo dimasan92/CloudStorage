@@ -123,18 +123,18 @@ public class StorageActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_ADD, 0, R.string.add_file);
-        menu.add(0, MENU_SYNCHRONIZE, 0 ,R.string.synchronize_files);
+        menu.add(0, MENU_SYNCHRONIZE, 0, R.string.synchronize_files);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case MENU_ADD:
                 showFileChooser();
                 break;
             case MENU_SYNCHRONIZE:
-                serverConnectionService.sendMsg(Constants.GET_LIST_OF_FILES);
+                serverConnectionService.sendMsg(Constants.LIST_OF_FILES_GET);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -185,8 +185,8 @@ public class StorageActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-                                    // экземпляр для подключения к сервису соединения с сервером
-                                    private ServiceConnection serverServiceConnection() {
+    // экземпляр для подключения к сервису соединения с сервером
+    private ServiceConnection serverServiceConnection() {
         return new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -290,6 +290,9 @@ public class StorageActivity extends AppCompatActivity {
                     case R.string.server_attempt_fail:
                         Toast.makeText(StorageActivity.this, R.string.server_attempt_fail,
                                 Toast.LENGTH_LONG).show();
+                        break;
+                    case R.string.list_of_server_files:
+                        System.out.println(msg.obj);
                         break;
                 }
             }
