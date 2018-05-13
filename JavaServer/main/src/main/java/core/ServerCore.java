@@ -3,6 +3,7 @@ package core;
 import authorization.AuthService;
 import authorization.SimpleAuthService;
 import common.Constants;
+import common.MessageHandler;
 import database.CloudStorageDatabase;
 import database.Database;
 import registration.RegService;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ServerCore {
+public class ServerCore implements MessageHandler {
 
     private ServerSocket serverSocket;              // сокет, определяемый при создании сервера
 
@@ -59,6 +60,7 @@ public class ServerCore {
             System.err.println("Ошибка при запуске сервера(порт " + Constants.SERVER_PORT + "): " + e.getMessage());
         } finally {
             dataBase.disconnect();
+            usersExecutorService.shutdown();
             try {
                 serverSocket.close();
             } catch (IOException e) {
@@ -125,6 +127,16 @@ public class ServerCore {
             Socket socket = serverSocket.accept();
             System.out.println("Клиент присоединился: IP: " + socket.getInetAddress() + " Порт: " + socket.getLocalPort());
             usersExecutorService.submit(new UserHandler(this, socket));
+        }
+    }
+
+    @Override
+    public void message(String message, TYPE type) {
+        switch (type){
+            case ERROR:
+                break;
+            case NOTIFY:
+                break;
         }
     }
 

@@ -1,6 +1,7 @@
 package registration;
 
 import common.Constants;
+import common.MessageHandler;
 import database.Database;
 import storage.FileStorage;
 
@@ -17,11 +18,14 @@ public class SimpleRegService implements RegService {
     private PreparedStatement psAddNewUser;
     private PreparedStatement psIsUserExists;
 
-    public SimpleRegService(Database database, FileStorage storage) {
+    private MessageHandler handler;
+
+    public SimpleRegService(Database database, FileStorage storage, MessageHandler handler) {
         connection = database.getConnection();
         this.storage = storage;
+        this.handler = handler;
         preparedStatements();
-        System.out.println("Успешный запуск сервиса регистрации");
+        handler.message("Успешный запуск сервиса регистрации", MessageHandler.TYPE.NOTIFY);
     }
 
     @Override
@@ -35,7 +39,8 @@ public class SimpleRegService implements RegService {
                 if (data.length == 4 && addNewUser(data[1], data[2], data[3]))
                     return Constants.REG_SUCCESS;
             } catch (SQLException e) {
-                System.err.println("Сервис регистрации: ошибка доступа к БД при добавлении нового пользователя:" + e.getMessage());
+                handler.message("Сервис регистрации: ошибка доступа к БД при добавлении нового пользователя:"
+                        + e.getMessage(), MessageHandler.TYPE.ERROR);
             }
         }
         return Constants.REG_FAILURE;

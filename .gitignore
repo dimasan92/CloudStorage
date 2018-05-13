@@ -9,3 +9,5 @@ AndroidClient/.gradle
 AndroidClient/build
 AndroidClient/captures
 AndroidClient/.externalNativeBuild
+*.class
+JavaServer/UserData
