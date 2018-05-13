@@ -292,7 +292,12 @@ public class StorageActivity extends AppCompatActivity {
                                 Toast.LENGTH_LONG).show();
                         break;
                     case R.string.list_of_server_files:
-                        System.out.println(msg.obj);
+                        String[] tmp = ((String) msg.obj).split("\\s");
+                        String[] listOfFilesFromServer = new String[tmp.length - 1];
+                        System.arraycopy(tmp, 1, listOfFilesFromServer, 0, listOfFilesFromServer.length);
+                        fileStorageService.synchronizeFiles(listOfFilesFromServer, fileList(),
+                                serverConnectionService.getExecutor(), serverConnectionService.getOutData(),
+                                StorageActivity.this);
                         break;
                 }
             }

@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -56,7 +57,6 @@ public class FileStorageService extends Service {
         executor.execute(() -> {
             try (FileInputStream inFile = context.openFileInput(path)) {
                 outData.writeLong(context.getFileStreamPath(path).length());
-                System.out.println(context.getFileStreamPath(path).length());
                 byte[] buffer = new byte[8 * 1024];
                 int count;
                 while ((count = inFile.read(buffer)) != -1) {
@@ -83,6 +83,21 @@ public class FileStorageService extends Service {
             }
             handler.sendMessage(message);
         });
+    }
+
+    public void synchronizeFiles(String[] listOfFilesFromServer, String[] listOfFilesFromClient,
+                                 ExecutorService executor, DataOutputStream outData, Context context) {
+        Arrays.sort(listOfFilesFromClient);
+        Arrays.sort(listOfFilesFromServer);
+        for (String filename : listOfFilesFromClient)
+            if (Arrays.binarySearch(listOfFilesFromServer, filename) == -1) {
+                System.out.println(filename);
+                sendFileToServer(executor, outData, context, filename);
+            }
+        for (String filename : listOfFilesFromServer)
+            if (Arrays.binarySearch(listOfFilesFromClient, filename) == -1) {
+                // запрос файла
+            }
     }
 
     private String getPathByUri(Context context, Uri uri) {
