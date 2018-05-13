@@ -47,6 +47,7 @@ public class StorageActivity extends AppCompatActivity {
     // id для меню
     private static final int MENU_DELETE = 0;
     private static final int MENU_ADD = 1;
+    private static final int MENU_SYNCHRONIZE = 2;
 
     // код возвращаемых сообщений
     private static final int FILE_SELECT_CODE = 0;
@@ -122,13 +123,19 @@ public class StorageActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_ADD, 0, R.string.add_file);
+        menu.add(0, MENU_SYNCHRONIZE, 0 ,R.string.synchronize_files);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == MENU_ADD) {
-            showFileChooser();
+        switch (item.getItemId()){
+            case MENU_ADD:
+                showFileChooser();
+                break;
+            case MENU_SYNCHRONIZE:
+                serverConnectionService.sendMsg(Constants.GET_LIST_OF_FILES);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
