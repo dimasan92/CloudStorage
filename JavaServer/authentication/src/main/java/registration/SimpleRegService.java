@@ -2,7 +2,9 @@ package registration;
 
 import common.Constants;
 import common.MessageHandler;
+import common.MessageHandler.TYPE;
 import database.Database;
+import security.PasswordStorage;
 import storage.FileStorage;
 
 import java.sql.Connection;
@@ -25,7 +27,7 @@ public class SimpleRegService implements RegService {
         this.storage = storage;
         this.handler = handler;
         preparedStatements();
-        handler.message("Успешный запуск сервиса регистрации", MessageHandler.TYPE.NOTIFY);
+        handler.message("Успешный запуск сервиса регистрации", TYPE.NOTIFY);
     }
 
     @Override
@@ -40,7 +42,7 @@ public class SimpleRegService implements RegService {
                     return Constants.REG_SUCCESS;
             } catch (SQLException e) {
                 handler.message("Сервис регистрации: ошибка доступа к БД при добавлении нового пользователя:"
-                        + e.getMessage(), MessageHandler.TYPE.ERROR);
+                        + e.getMessage(), TYPE.ERROR);
             }
         }
         return Constants.REG_FAILURE;
@@ -52,15 +54,22 @@ public class SimpleRegService implements RegService {
             psAddNewUser = connection.prepareStatement("INSERT INTO users (nickname, login, password) VALUES (?, ?, ?);");
             psIsUserExists = connection.prepareStatement("SELECT* FROM users WHERE nickname = ? OR login = ?;");
         } catch (SQLException e) {
-            System.err.println("Сервис регистрации: ошибка доступа к БД :" + e.getMessage());
+            handler.message("Сервис регистрации: ошибка доступа к БД :" + e.getMessage(), TYPE.ERROR);
         }
     }
 
     // добавляет нового пользователя в БД
-    private boolean addNewUser(String nickname, String login, String pass) throws SQLException {
+    private boolean addNewUser(String nickname, String login, String password) throws SQLException {
+        String hashPassword;
+        try {
+            hashPassword = PasswordStorage.createHash(password);
+        } catch (PasswordStorage.CannotPerformOperationException e) {
+            handler.message("Неуспешное хеширование пароля пользователя " + login + " " + e, TYPE.ERROR);
+            return false;
+        }
         psAddNewUser.setString(1, nickname);
         psAddNewUser.setString(2, login);
-        psAddNewUser.setString(3, pass);
+        psAddNewUser.setString(3, hashPassword);
         int update = psAddNewUser.executeUpdate();
         if (!storage.assignFolderToUser(nickname)) return false;
         return update > 0;
