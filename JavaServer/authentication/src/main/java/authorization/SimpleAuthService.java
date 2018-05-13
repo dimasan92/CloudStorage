@@ -1,7 +1,10 @@
 package authorization;
 
 import common.Constants;
+import common.MessageHandler;
+import common.MessageHandler.TYPE;
 import database.Database;
+import security.PasswordStorage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,14 +13,16 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class SimpleAuthService implements AuthService {
+
     private Connection connection;
+    private PreparedStatement psGetUserHash;
+    private MessageHandler handler;
 
-    private PreparedStatement psGetUser;
-
-    public SimpleAuthService(Database database) {
+    public SimpleAuthService(Database database, MessageHandler handler) {
         this.connection = database.getConnection();
         preparedStatements();
-        System.out.println("Успешный запуск сервиса авторизации");
+        this.handler = handler;
+        handler.message("Успешный запуск сервиса авторизации", TYPE.NOTIFY);
     }
 
     @Override
@@ -42,7 +47,8 @@ public class SimpleAuthService implements AuthService {
                         result[1] = Constants.AUTH_NICK_NOT_EXIST;
                     }
                 } catch (SQLException e) {
-                    System.out.println("Сервис авторизации: ошибка доступа к БД при получении имени пользователя: " + e.getMessage());
+                    handler.message("Сервис авторизации: ошибка доступа к БД при получении имени пользователя: "
+                            + e.getMessage(), TYPE.ERROR);
                 }
             }
         } else {
@@ -54,19 +60,22 @@ public class SimpleAuthService implements AuthService {
     // подготовленные запросы
     private void preparedStatements() {
         try {
-            psGetUser = connection.prepareStatement("SELECT nickname FROM users WHERE login = ? AND password = ?;");
+            psGetUserHash = connection.prepareStatement("SELECT * FROM users WHERE login = ?;");
         } catch (SQLException e) {
-            System.out.println("Сервис авторизации: ошибка доступа к БД :" + e.getMessage());
+            handler.message("Сервис авторизации: ошибка доступа к БД :" + e.getMessage(), TYPE.ERROR);
         }
     }
 
-    private String getUserByLoginAndPass(String login, String pass) throws SQLException {
-        psGetUser.setString(1, login);
-        psGetUser.setString(2, pass);
-        try (ResultSet resultSet = psGetUser.executeQuery()) {
+    private String getUserByLoginAndPass(String login, String password) throws SQLException {
+        psGetUserHash.setString(1, login);
+        try (ResultSet resultSet = psGetUserHash.executeQuery()) {
             if (resultSet.next()) {
+                if (!PasswordStorage.verifyPassword(password, resultSet.getString("pass")))
+                    return null;
                 return resultSet.getString("nickname");
             }
+        } catch (PasswordStorage.CannotPerformOperationException | PasswordStorage.InvalidHashException e) {
+            handler.message(e.getMessage(), TYPE.ERROR);
         }
         return null;
     }
