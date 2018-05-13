@@ -100,6 +100,7 @@ public class StorageActivity extends AppCompatActivity {
                 return R.drawable.mp3128;
             case "jpeg":
             case "jpg":
+            case "JPG":
                 return R.drawable.jpeg128;
             case "pdf":
                 return R.drawable.pdf128;
@@ -133,9 +134,9 @@ public class StorageActivity extends AppCompatActivity {
             case MENU_ADD:
                 showFileChooser();
                 break;
-            case MENU_SYNCHRONIZE:
-                serverConnectionService.sendMsg(Constants.LIST_OF_FILES_GET);
-                break;
+//            case MENU_SYNCHRONIZE:
+//                serverConnectionService.sendMsg(Constants.LIST_OF_FILES_GET);
+//                break;
         }
         return super.onOptionsItemSelected(item);
     }

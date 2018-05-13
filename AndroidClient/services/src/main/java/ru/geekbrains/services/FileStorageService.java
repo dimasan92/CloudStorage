@@ -89,11 +89,12 @@ public class FileStorageService extends Service {
                                  ExecutorService executor, DataOutputStream outData, Context context) {
         Arrays.sort(listOfFilesFromClient);
         Arrays.sort(listOfFilesFromServer);
-        for (String filename : listOfFilesFromClient)
+        for (String filename : listOfFilesFromClient) {
             if (Arrays.binarySearch(listOfFilesFromServer, filename) == -1) {
                 System.out.println(filename);
                 sendFileToServer(executor, outData, context, filename);
             }
+        }
         for (String filename : listOfFilesFromServer)
             if (Arrays.binarySearch(listOfFilesFromClient, filename) == -1) {
                 // запрос файла
